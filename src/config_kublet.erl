@@ -4,7 +4,7 @@
 %%% 
 %%% Created : 10 dec 2012
 %%% -------------------------------------------------------------------
--module(loader).   
+-module(config_kublet).   
  
     
 %% --------------------------------------------------------------------
@@ -17,11 +17,15 @@
 
 %% External exports
 -export([
+	 apps_to_start/1,
 	 nodes_to_contact/0,
-	 clean_service_dir/0,
-	 load_services/0,
-	 allocate/1,
-	 deallocate/2
+%	 hosts_to_contact/0,
+	 host_info/0,
+	 host_info/1,
+	 host_info/2,
+	 host_type/0,
+	 host_type/1,
+	 type/1
 	]).
 
 
@@ -29,6 +33,76 @@
 %% ====================================================================
 %% External functions
 %% ====================================================================
+%% --------------------------------------------------------------------
+%% Function:start
+%% Description: List of test cases 
+%% Returns: non
+%% --------------------------------------------------------------------
+apps_to_start(Type)->
+    {ok,I}=file:consult(?KubletConfig),
+    Result=case Type of 
+	       auto_erl_controller ->
+		   proplists:get_value(auto_erl_controller_apps,I);
+	       non_auto_erl_controller ->
+		   proplists:get_value(non_auto_erl_controller_apps,I);
+	       non_auto_erl_worker->
+		   proplists:get_value(non_auto_erl_worker_apps,I);
+	       auto_erl_worker->
+		   proplists:get_value(auto_erl_worker_apps,I);
+	       _->
+		   undefined
+	   end,
+    Result.
+%% --------------------------------------------------------------------
+%% Function:start
+%% Description: List of test cases 
+%% Returns: non
+%% --------------------------------------------------------------------
+
+%% --------------------------------------------------------------------
+%% Function:start
+%% Description: List of test cases 
+%% Returns: non
+%% --------------------------------------------------------------------
+host_info()->
+    {ok,I}=file:consult(?KubletConfig),
+    proplists:get_value(host_info,I).
+host_info(Host)->
+    lists:keyfind(Host,1,host_info()).
+host_info(Host,Type)->
+    Result=case host_info(Host) of
+	       undefined->
+		   undefined;
+	       {_,Ip,SshId,Uid,PassWd} ->
+		   case Type of
+		       ip->
+			   Ip;
+		       ssh_port->
+			   SshId;
+		       uid->
+			   Uid;
+		       passwd->
+			   PassWd;
+		       Type->
+			   undefined
+		   end
+	   end,
+    Result.
+%% --------------------------------------------------------------------
+%% Function:host_type(Host)->auto_erl_controller|non_auto_erl_controller
+%%                               non_auto_erl_worker|non_auto_worker|
+%%                               undefined
+%% Description:
+%% Returns: non
+%% --------------------------------------------------------------------
+host_type()->
+    {ok,I}=file:consult(?KubletConfig),
+    proplists:get_value(host_type,I).
+host_type(Host)->
+    lists:keyfind(Host,1,host_type()).
+type(XType)->
+    [Host||{Host,Type}<-host_type(),
+	   XType=:=Type].
 
 %% --------------------------------------------------------------------
 %% Function:start

@@ -46,7 +46,24 @@
 %%          {stop, Reason}
 %% --------------------------------------------------------------------
 init([]) ->
-    Loaded_services=loader:load_services(),
+    LoadedServices=rpc:call(node(),loader,load_services,[]),
+    io:format("LoadedServices ~p~n",[LoadedServices]),
+    NodesToContact=rpc:call(node(),loader,nodes_to_contact,[]),
+    io:format("NodesToContact ~p~n",[NodesToContact]),
+    
+    
+    ok=application:set_env([{bully,[{nodes,NodesToContact}]}]),
+    ok=application:start(bully),
+    ok=application:start(sd),
+    ok=application:start(controller),
+
+    
+
+    
+    
+    
+    
+    
     
  %   case application:get_env(mode) of
 %	{mode,worker}->	

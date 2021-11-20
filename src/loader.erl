@@ -17,7 +17,6 @@
 
 %% External exports
 -export([
-	 nodes_to_contact/0,
 	 clean_service_dir/0,
 	 load_services/0,
 	 allocate/1,
@@ -35,10 +34,7 @@
 %% Description: List of test cases 
 %% Returns: non
 %% --------------------------------------------------------------------
-nodes_to_contact()->
-    {ok,I}=file:consult(?KubletConfig),   
-    NodesToContact=proplists:get_value(nodes_to_contact,I),
-    NodesToContact.
+
 
 %% --------------------------------------------------------------------
 %% Function:start

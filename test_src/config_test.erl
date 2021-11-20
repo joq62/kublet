@@ -51,9 +51,9 @@ start()->
     ok=which_hosts_shall_be_contacted_to_create_cluster(),
     io:format("~p~n",[{"Stop which_hosts_shall_be_contacted_to_create_cluster()",?MODULE,?FUNCTION_NAME,?LINE}]),
 
-%    io:format("~p~n",[{"Start which_nodes_shall_bully_contact()",?MODULE,?FUNCTION_NAME,?LINE}]),
-    ok=which_nodes_shall_bully_contact(),
-    io:format("~p~n",[{"Stop which_nodes_shall_bully_contact()",?MODULE,?FUNCTION_NAME,?LINE}]),
+%    io:format("~p~n",[{"Start which_hosts_shall_bully_contact()",?MODULE,?FUNCTION_NAME,?LINE}]),
+    ok=which_hosts_shall_bully_contact(),
+    io:format("~p~n",[{"Stop which_hosts_shall_bully_contact()",?MODULE,?FUNCTION_NAME,?LINE}]),
 
  %   
       %% End application tests
@@ -70,9 +70,9 @@ start()->
 %% Returns: non
 %% --------------------------------------------------------------------
 
-which_nodes_shall_bully_contact()->
+which_hosts_shall_bully_contact()->
     [{"c200",kublet@c200},
-     {"c201",kublet@c201}]=config_kublet:which_nodes_shall_bully_contact(),
+     {"c201",kublet@c201}]=config_kublet:which_hosts_shall_bully_contact(),
     
     ok.
 %% --------------------------------------------------------------------
@@ -81,12 +81,7 @@ which_nodes_shall_bully_contact()->
 %% Returns: non
 %% --------------------------------------------------------------------
 which_nodes_shall_be_contacted_to_create_cluster()->
-    [kublet@c100,
-     kublet@c200,
-     kublet@c201,
-     kublet@c202,
-     kublet@c203]=config_kublet:which_nodes_shall_be_contacted_to_create_cluster(),
-    
+  
     ok.
 
 %% --------------------------------------------------------------------
@@ -95,7 +90,10 @@ which_nodes_shall_be_contacted_to_create_cluster()->
 %% Returns: non
 %% --------------------------------------------------------------------
 which_hosts_shall_be_contacted_to_create_cluster()->
-    ["c200","c201","202","c203"]=config_kublet:which_hosts_shall_be_contacted_to_create_cluster(),
+    [{"c200",kublet@c200},
+     {"c201",kublet@c201},
+     {"c202",kublet@c202},
+     {"c203",kublet@c203}]=config_kublet:which_hosts_shall_be_contacted_to_create_cluster(),
     
     ok.
 

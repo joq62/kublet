@@ -19,7 +19,9 @@
 -export([
 	 apps_to_start/1,
 	 nodes_to_contact/0,
-%	 hosts_to_contact/0,
+	 which_nodes_shall_bully_contact/0,
+	 which_hosts_shall_be_contacted_to_create_cluster/0,
+	 which_nodes_shall_be_contacted_to_create_cluster/0,
 	 host_info/0,
 	 host_info/1,
 	 host_info/2,
@@ -33,6 +35,34 @@
 %% ====================================================================
 %% External functions
 %% ====================================================================
+%% --------------------------------------------------------------------
+%% Function:start
+%% Description: List of test cases 
+%% Returns: non
+%% --------------------------------------------------------------------
+which_nodes_shall_be_contacted_to_create_cluster()->
+    {ok,I}=file:consult(?KubletConfig),
+    lists:delete(node(),proplists:get_value(nodes_to_contact,I)).
+
+%% --------------------------------------------------------------------
+%% Function:start
+%% Description: List of test cases 
+%% Returns: non
+%% --------------------------------------------------------------------
+which_hosts_shall_be_contacted_to_create_cluster()->
+    {ok,I}=file:consult(?KubletConfig),
+    {ok,HostName}=net:gethostname(),
+    lists:delete(HostName,proplists:get_value(hosts_to_contact,I)).
+%% --------------------------------------------------------------------
+%% Function:start
+%% Description: List of test cases 
+%% Returns: non
+%% --------------------------------------------------------------------
+which_nodes_shall_bully_contact()->
+    AllNodes=lists:append(type(auto_erl_controller),type(non_auto_erl_controller)),
+    {ok,HostName}=net:gethostname(),
+    lists:delete({HostName,node()},AllNodes).
+ 
 %% --------------------------------------------------------------------
 %% Function:start
 %% Description: List of test cases 
@@ -101,9 +131,11 @@ host_type()->
 host_type(Host)->
     lists:keyfind(Host,1,host_type()).
 type(XType)->
-    [Host||{Host,Type}<-host_type(),
+    [{Host,Node}||{Host,Node,Type}<-host_type(),
 	   XType=:=Type].
-
+host_node(XHost)->
+      [Node||{Host,Node,Type}<-host_type(),
+	     XHost=:=Host].
 %% --------------------------------------------------------------------
 %% Function:start
 %% Description: List of test cases 

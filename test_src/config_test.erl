@@ -43,6 +43,17 @@ start()->
     ok=apps_to_start(),
     io:format("~p~n",[{"Stop apps_to_start()",?MODULE,?FUNCTION_NAME,?LINE}]),
 
+%    io:format("~p~n",[{"Start which_nodes_shall_be_contacted_to_create_cluster()",?MODULE,?FUNCTION_NAME,?LINE}]),
+    ok=which_nodes_shall_be_contacted_to_create_cluster(),
+    io:format("~p~n",[{"Stop which_nodes_shall_be_contacted_to_create_cluster()",?MODULE,?FUNCTION_NAME,?LINE}]),
+
+%    io:format("~p~n",[{"Start which_hosts_shall_be_contacted_to_create_cluster()",?MODULE,?FUNCTION_NAME,?LINE}]),
+    ok=which_hosts_shall_be_contacted_to_create_cluster(),
+    io:format("~p~n",[{"Stop which_hosts_shall_be_contacted_to_create_cluster()",?MODULE,?FUNCTION_NAME,?LINE}]),
+
+%    io:format("~p~n",[{"Start which_nodes_shall_bully_contact()",?MODULE,?FUNCTION_NAME,?LINE}]),
+    ok=which_nodes_shall_bully_contact(),
+    io:format("~p~n",[{"Stop which_nodes_shall_bully_contact()",?MODULE,?FUNCTION_NAME,?LINE}]),
 
  %   
       %% End application tests
@@ -53,7 +64,40 @@ start()->
     io:format("------>"++atom_to_list(?MODULE)++" ENDED SUCCESSFUL ---------"),
     ok.
 
+%% --------------------------------------------------------------------
+%% Function:start/0 
+%% Description: Initiate the eunit tests, set upp needed processes etc
+%% Returns: non
+%% --------------------------------------------------------------------
 
+which_nodes_shall_bully_contact()->
+    [{"c200",kublet@c200},
+     {"c201",kublet@c201}]=config_kublet:which_nodes_shall_bully_contact(),
+    
+    ok.
+%% --------------------------------------------------------------------
+%% Function:start/0 
+%% Description: Initiate the eunit tests, set upp needed processes etc
+%% Returns: non
+%% --------------------------------------------------------------------
+which_nodes_shall_be_contacted_to_create_cluster()->
+    [kublet@c100,
+     kublet@c200,
+     kublet@c201,
+     kublet@c202,
+     kublet@c203]=config_kublet:which_nodes_shall_be_contacted_to_create_cluster(),
+    
+    ok.
+
+%% --------------------------------------------------------------------
+%% Function:start/0 
+%% Description: Initiate the eunit tests, set upp needed processes etc
+%% Returns: non
+%% --------------------------------------------------------------------
+which_hosts_shall_be_contacted_to_create_cluster()->
+    ["c200","c201","202","c203"]=config_kublet:which_hosts_shall_be_contacted_to_create_cluster(),
+    
+    ok.
 
 %% --------------------------------------------------------------------
 %% Function:start/0 
@@ -72,6 +116,19 @@ apps_to_start()->
     undefined= config_kublet:apps_to_start(glurk),
     
     ok.
+
+%% --------------------------------------------------------------------
+%% Function:start/0 
+%% Description: Initiate the eunit tests, set upp needed processes etc
+%% Returns: non
+%% --------------------------------------------------------------------
+
+%% --------------------------------------------------------------------
+%% Function:start/0 
+%% Description: Initiate the eunit tests, set upp needed processes etc
+%% Returns: non
+%% --------------------------------------------------------------------
+
 
 %% --------------------------------------------------------------------
 %% Function:start/0 
@@ -100,18 +157,18 @@ host_info()->
 %% --------------------------------------------------------------------
 
 host_type()->
-    {"c202",auto_erl_worker}=config_kublet:host_type("c202"),
-    {"c203",non_auto_erl_worker}=config_kublet:host_type("c203"),
+    {"c202",kublet@c202,auto_erl_worker}=config_kublet:host_type("c202"),
+    {"c203",kublet@c203,non_auto_erl_worker}=config_kublet:host_type("c203"),
 
-    ["c100","c203"]=config_kublet:type(non_auto_erl_worker),
-    ["c202"]=config_kublet:type(auto_erl_worker),
-    ["c200","c201"]=config_kublet:type(auto_erl_controller),
+    [{"c100",kublet@c100},{"c203",kublet@c203}]=config_kublet:type(non_auto_erl_worker),
+    [{"c202",kublet@c202}]=config_kublet:type(auto_erl_worker),
+    [{"c200",kublet@c200},{"c201",kublet@c201}]=config_kublet:type(auto_erl_controller),
 
-    [{"c100",non_auto_erl_worker},
-     {"c200",auto_erl_controller},
-     {"c201",auto_erl_controller},
-     {"c202",auto_erl_worker},
-     {"c203",non_auto_erl_worker}]=config_kublet:host_type(),
+    [{"c100",kublet@c100,non_auto_erl_worker},
+     {"c200",kublet@c200,auto_erl_controller},
+     {"c201",kublet@c201,auto_erl_controller},
+     {"c202",kublet@c202,auto_erl_worker},
+     {"c203",kublet@c203,non_auto_erl_worker}]=config_kublet:host_type(),
     
     ok.
 

@@ -79,15 +79,17 @@ start_kublets([_|T],Acc)->
 start_kublet(HostId)->
     ssh:start(),  
     Cookie=atom_to_list(erlang:get_cookie()),
-    {Host,Ip,SshPort,UId,Pwd}=config_kublet:host_info(HostId),
+    {_Host,Ip,SshPort,UId,Pwd,Erl}=config_kublet:host_info(HostId),
     NodeName="kublet",
     Node=list_to_atom(NodeName++"@"++HostId),
     Result=case delete_vm(Node) of
 	       {error,Reason}->
 		   {error,Reason};
 	       ok->
-		   ErlCmd="erl_call -s "++"-sname "++NodeName++" "++"-c "++Cookie,
+		 %  ErlCmd="erl_call -s "++"-sname "++NodeName++" "++"-c "++Cookie,
+		   ErlCmd=Erl++" -sname "++NodeName++" "++"-setcookie "++Cookie++" -detached",		   
 		   SshCmd="nohup "++ErlCmd++" &",
+		 %  SshCmd="date",
 		   case rpc:call(node(),my_ssh,ssh_send,[Ip,SshPort,UId,Pwd,SshCmd,2*5000],3*5000) of
 		       {badrpc,Reason}->
 			  {error,[badrpc,Reason,Ip,SshPort,UId,Pwd,NodeName,Cookie,

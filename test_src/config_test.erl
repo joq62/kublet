@@ -135,17 +135,18 @@ apps_to_start()->
 %% --------------------------------------------------------------------
 
 host_info()->
-    {"c201","192.168.0.201",22,"joq62","festum01"}=config_kublet:host_info("c201"),
+    {"c201","192.168.0.201",22,"joq62","festum01","erl "}=config_kublet:host_info("c201"),
     "192.168.0.201"=config_kublet:host_info("c201",ip),
     22=config_kublet:host_info("c201",ssh_port),
     "joq62"=config_kublet:host_info("c201",uid),
     "festum01"=config_kublet:host_info("c201",passwd),
     undefined=config_kublet:host_info("c201",glurk),
-    [{"c100","192.168.0.100",22,"joq62","festum01"},
-     {"c200","192.168.0.200",22,"joq62","festum01"},
-     {"c201","192.168.0.201",22,"joq62","festum01"},
-     {"c202","192.168.0.202",22,"joq62","festum01"},
-     {"c203","192.168.0.203",22,"pi","festum01"}]=config_kublet:host_info(),
+  [{"c100","192.168.0.100",22,"joq62","festum01","erl "},
+   {"c200","192.168.0.200",22,"joq62","festum01","erl "},
+   {"c201","192.168.0.201",22,"joq62","festum01","erl "},
+   {"c202","192.168.0.202",22,"joq62","festum01","erl "},
+   {"c203","192.168.0.203",22,"pi","festum01",
+    "/snap/erlang/current/usr/bin/erl "}]=config_kublet:host_info(),
 
     ok.
 %% --------------------------------------------------------------------

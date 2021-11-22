@@ -104,7 +104,7 @@ host_info(Host,Type)->
     Result=case host_info(Host) of
 	       undefined->
 		   undefined;
-	       {_,Ip,SshId,Uid,PassWd} ->
+	       {_,Ip,SshId,Uid,PassWd,ErlCmd} ->
 		   case Type of
 		       ip->
 			   Ip;
@@ -114,6 +114,8 @@ host_info(Host,Type)->
 			   Uid;
 		       passwd->
 			   PassWd;
+		       erl_cmd->
+			   ErlCmd;
 		       Type->
 			   undefined
 		   end

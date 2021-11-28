@@ -35,8 +35,12 @@ start()->
  %   ok=ssh_test(),
  %   io:format("~p~n",[{"Stop ssh_test()",?MODULE,?FUNCTION_NAME,?LINE}]),
  %   io:format("~p~n",[{"Start gap_desired_state()",?MODULE,?FUNCTION_NAME,?LINE}]),
-    ok=gap_desired_state(),
-    io:format("~p~n",[{"Stop gap_desired_state()",?MODULE,?FUNCTION_NAME,?LINE}]),
+ %   ok=gap_desired_state(),
+ %   io:format("~p~n",[{"Stop gap_desired_state()",?MODULE,?FUNCTION_NAME,?LINE}]),
+
+ %   io:format("~p~n",[{"Start available_hosts()",?MODULE,?FUNCTION_NAME,?LINE}]),
+    ok=available_hosts(),
+    io:format("~p~n",[{"Stop available_hosts()",?MODULE,?FUNCTION_NAME,?LINE}]),
 
 
       %% End application tests
@@ -47,6 +51,17 @@ start()->
     io:format("------>"++atom_to_list(?MODULE)++" ENDED SUCCESSFUL ---------"),
     ok.
 
+%% --------------------------------------------------------------------
+%% Function:start/0 
+%% Description: Initiate the eunit tests, set upp needed processes etc
+%% Returns: non
+%% --------------------------------------------------------------------
+available_hosts()->
+    ok=application:start(kublet),
+  %  gl=hosts:available(),
+    kublet:available_hosts(),
+    
+    ok.
 
 %% --------------------------------------------------------------------
 %% Function:start/0 

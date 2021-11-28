@@ -20,7 +20,7 @@
 	 apps_to_start/1,
 	 nodes_to_contact/0,
 %	 which_nodes_shall_bully_contact/0,
-	 which_hosts_shall_bully_contact/0,
+	 which_hosts_shall_controller_contact/0,
 	 which_hosts_shall_be_contacted_to_create_cluster/0,
 %	 which_nodes_shall_be_contacted_to_create_cluster/0,
 	 host_info/0,
@@ -59,7 +59,7 @@ which_hosts_shall_be_contacted_to_create_cluster()->
 %% Description: List of test cases 
 %% Returns: non
 %% --------------------------------------------------------------------
-which_hosts_shall_bully_contact()->
+which_hosts_shall_controller_contact()->
     AllNodes=lists:append(type(auto_erl_controller),type(non_auto_erl_controller)),
     {ok,HostName}=net:gethostname(),
     lists:delete({HostName,node()},AllNodes).

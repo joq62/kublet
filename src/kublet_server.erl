@@ -14,6 +14,13 @@
 % -include("").
 -include_lib("kernel/include/logger.hrl").
 %% --------------------------------------------------------------------
+-ifdef(debug_flag).
+-define(DEBUG,["test_src","service.catalog"]).
+-else.
+-define(DEBUG,[]).
+-endif.
+
+
 %% External exports
  
 
@@ -45,32 +52,29 @@
 %%          ignore               |
 %%          {stop, Reason}
 %% --------------------------------------------------------------------
+
+
 init([]) ->
-    LoadedServices=rpc:call(node(),loader,load_services,[]),
+    
+    LoadedServices=rpc:call(node(),loader,load_services,?DEBUG),
     io:format("LoadedServices ~p~n",[LoadedServices]),
-    NodesToContact=rpc:call(node(),loader,nodes_to_contact,[]),
+    NodesToContact=[Node||{_Host,Node}<-rpc:call(node(),config_kublet,which_hosts_shall_be_contacted_to_create_cluster,[])],
     io:format("NodesToContact ~p~n",[NodesToContact]),
     
-    
-    ok=application:set_env([{bully,[{nodes,NodesToContact}]}]),
-    ok=application:start(bully),
-    ok=application:start(sd),
-    ok=application:start(controller),
-
-    
-
-    
-    
-    
-    
-    
-    
- %   case application:get_env(mode) of
-%	{mode,worker}->	
-%	    ok;
-%	{mode,controller}->
-%	    {ok,_ControllerNode}=loader:allocate(controller)
- %   end,
+    ok=case application:get_env(mode) of
+	   {ok,worker}->	
+	       nok;
+	   {ok,controller}->
+	       ControllerNodes=[Node||{_Host,Node}<-config_kublet:which_hosts_shall_controller_contact()],
+	       io:format("ControllerNodes ~p~n",[ControllerNodes]),
+	       ok=application:set_env([{bully,[{nodes,ControllerNodes}]}]),
+	       ok=application:start(bully),
+	       timer:sleep(2*1000),
+	       ok=application:start(sd),
+	   %    io:format("Applications ~p~n",[application:which_applications()]),
+	       ok=application:start(controller),
+	       ok
+       end,
    % {ok,ControllerNode}=loader:allocate(controller)
     ?LOG_NOTICE(#{module=>?MODULE,function=>?FUNCTION_NAME,line=>?LINE,
 		  msg=>"server started/restarted\n"}),
@@ -87,9 +91,13 @@ init([]) ->
 %%          {stop, Reason, Reply, State}   | (terminate/2 is called)
 %%          {stop, Reason, State}            (terminate/2 is called)
 %% --------------------------------------------------------------------
-handle_call({}, _From, State) ->
-    Reply = boot_loader:get_nodes(),
+handle_call({available_hosts}, _From, State) ->
+    io:format("~p~n",[{available_hosts,?MODULE,?LINE}]),
+    Reply = hosts:available(),
+%            hosts:available()
     {reply, Reply, State};
+
+
 
 handle_call({stop}, _From, State) ->
     {stop, normal, shutdown_ok, State};

@@ -19,6 +19,7 @@
 -export([
 	 clean_service_dir/0,
 	 load_services/0,
+	 load_services/2,
 	 allocate/1,
 	 deallocate/2
 	]).
@@ -125,7 +126,16 @@ load_services()->
 
     {ok,CatalogInfo}=catalog_info(Dir,FileName),
     [load_service(RootDir,ServiceInfo)||ServiceInfo<-CatalogInfo].
-    
+
+%% Debug support
+load_services(Dir,FileName)->
+    {ok,I}=file:consult(?KubletConfig),   
+    ServiceCatalog=proplists:get_value(service_catalog,I),
+    RootDir=proplists:get_value(service_dir,I),
+    os:cmd("rm -rf "++RootDir),
+    ok=file:make_dir(RootDir),
+    {ok,CatalogInfo}=catalog_info(Dir,FileName),
+    [load_service(RootDir,ServiceInfo)||ServiceInfo<-CatalogInfo].
 
 %% --------------------------------------------------------------------
 %% Function:start

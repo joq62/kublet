@@ -21,6 +21,9 @@
 %% --------------------------------------------------------------------
 -export([
 	 
+
+	 available_hosts/0,
+	 start_app/1,
 	 get_nodes/0
         ]).
 
@@ -62,4 +65,8 @@ stop()-> gen_server:call(?SERVER, {stop},infinity).
    
 get_nodes()->
     gen_server:call(?SERVER, {get_nodes},infinity).
+available_hosts()->
+    gen_server:call(?SERVER, {available_hosts},infinity).
+start_app(App)->
+    gen_server:call(?SERVER, {start_app,App},infinity).
 

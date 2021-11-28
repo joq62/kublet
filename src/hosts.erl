@@ -17,6 +17,7 @@
 
 %% External exports
 -export([
+	 available/0,
 	 desired_state/0,
 	 gap_desired_state/0
 	]).
@@ -27,6 +28,11 @@
 %% External functions
 %% ====================================================================
 
+available()->
+    DesiredHostsNodes=config_kublet:which_hosts_shall_be_contacted_to_create_cluster(),
+    AvailableHostNode=[{Host,Node}||{Host,Node}<-DesiredHostsNodes,
+				  pong=:=net_adm:ping(Node)],
+    AvailableHostNode.
 %% --------------------------------------------------------------------
 %% Function:start
 %% Description: List of test cases 
